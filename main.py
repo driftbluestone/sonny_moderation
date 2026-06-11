@@ -3,6 +3,7 @@ import time as tm
 from discord import app_commands
 from discord.ext import commands
 from api import users
+from utils import config
 
 async def setup(bot: commands.Bot) -> None:
     await bot.add_cog(Moderation(bot=bot))
@@ -46,6 +47,9 @@ class Moderation(commands.Cog):
             return await interaction.response.send_message("Cannot timeout yourself!")
         if num > (60 * 60 * 24 * 7 * 4):
             return await interaction.response.send_message("Duration too long, max 28 days.")
+        if (user.id not in config.server_config["bot_admins"]) or (interaction.guild.roles.index(interaction.user.roles[-1]) <= interaction.guild.roles.index(user.roles[-1])):
+            return await interaction.response.send_message("Cannot timeout user: user has role(s) above or equal")
+        
         duration = datetime.timedelta(seconds=num)
         await user.timeout(duration, reason=reason)
         embed = discord.Embed(description = f"{user.mention} timed out until <t:{int(tm.time()) + num}:S>\nReason: `{reason}`")
