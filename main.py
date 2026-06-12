@@ -51,7 +51,7 @@ class Moderation(commands.Cog):
             return await interaction.response.send_message("Cannot timeout user: user has role(s) above or equal")
         
         duration = datetime.timedelta(seconds=num)
-        await user.timeout(duration, reason=reason)
+        await user.timeout(duration, reason=f"{interaction.user.name}: {reason}")
         embed = discord.Embed(description = f"{user.mention} timed out until <t:{int(tm.time()) + num}:S>\nReason: `{reason}`")
         embed.set_author(name=interaction.user.name, icon_url=interaction.user.display_avatar.url)
         await interaction.response.send_message(embed=embed)
