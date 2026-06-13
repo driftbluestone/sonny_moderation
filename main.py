@@ -18,7 +18,7 @@ times = {
 
 class ModerationCommands(app_commands.Group):
     async def interaction_check(self, interaction: discord.Interaction):
-        permission =  users.has_permission(interaction.user.id, "moderation")
+        permission = users.has_permission(interaction.user.id, "moderator")
         if not permission:
             await interaction.response.send_message(":warning: No permission", ephemeral=True)
         return permission
@@ -37,7 +37,7 @@ class Moderation(commands.Cog):
         except:
             try:
                 num = int(time[:-1])
-                value = time[-1]
+                value = time[-1].lower()
             except:
                 return await interaction.response.send_message("Invalid time input")
         if value not in times:
