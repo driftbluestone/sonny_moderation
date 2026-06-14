@@ -18,7 +18,7 @@ times = {
 
 class ModerationCommands(app_commands.Group):
     async def interaction_check(self, interaction: discord.Interaction):
-        permission = users.has_permission(interaction.user.id, "moderator")
+        permission = await users.has_permission(interaction.user.id, "moderator")
         if not permission:
             await interaction.response.send_message(":warning: No permission", ephemeral=True)
         return permission
@@ -47,7 +47,7 @@ class Moderation(commands.Cog):
             return await interaction.response.send_message("Cannot timeout yourself!")
         if num > (60 * 60 * 24 * 7 * 4):
             return await interaction.response.send_message("Duration too long, max 28 days.")
-        if (user.id not in config.server_config["bot_admins"]) or (interaction.guild.roles.index(interaction.user.roles[-1]) <= interaction.guild.roles.index(user.roles[-1])):
+        if (user.id not in config.server_config["bot_admins"]) and (interaction.guild.roles.index(interaction.user.roles[-1]) <= interaction.guild.roles.index(user.roles[-1])):
             return await interaction.response.send_message("Cannot timeout user: user has role(s) above or equal")
         
         duration = datetime.timedelta(seconds=num)
